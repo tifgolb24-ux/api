@@ -1,9 +1,0 @@
-/.pytest_cache/
-/.ruff_cache/
-/bisagym.db
-/gym.db
-__pycache__/
-*.py[cod]
-.env
-.venv/
-
