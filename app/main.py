@@ -82,7 +82,14 @@ def create_app(
     @asynccontextmanager
     async def lifespan(application: FastAPI):
         if settings.auto_create_db:
-            Base.metadata.create_all(database_engine)
+            try:
+                Base.metadata.create_all(database_engine)
+                from app.seed import seed_database
+                with SessionLocal() as db:
+                    seed_database(db, settings)
+                logger.info("Database initialized and seeded successfully.")
+            except Exception as db_exc:
+                logger.warning("Database auto-create/seed deferred or failed: %s", db_exc)
         try:
             application.state.face_engine = face_engine or create_face_engine(settings)
             application.state.face_engine_health = application.state.face_engine.health()

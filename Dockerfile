@@ -16,8 +16,8 @@ RUN pip install --no-cache-dir --upgrade pip && \
 # Copy all application files
 COPY . .
 
-# Expose port
-EXPOSE 8001
+# Expose port (default 8080 for Railway)
+EXPOSE 8080
 
 # Start command
-CMD ["sh", "-c", "python -m app.download_models && python -m app.seed && uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8001}"]
+CMD ["sh", "-c", "python -m app.download_models && uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8080}"]
