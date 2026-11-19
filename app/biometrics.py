@@ -190,8 +190,8 @@ class OpenCvSFaceEngine:
             raise RuntimeError(
                 "OpenCV SFace engine requires numpy and opencv-python-headless 4.13."
             ) from exc
-        if not cv2.__version__.startswith("4.13."):
-            raise RuntimeError(f"OpenCV 4.13 is required; found {cv2.__version__}.")
+        if not cv2.__version__.startswith("4.") and not cv2.__version__.startswith("5."):
+            raise RuntimeError(f"OpenCV 4.x is required; found {cv2.__version__}.")
         self.cv2 = cv2
         self.np = np
         try:
