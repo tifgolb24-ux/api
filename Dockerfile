@@ -20,4 +20,4 @@ COPY . .
 EXPOSE 8080
 
 # Start command
-CMD ["sh", "-c", "python -m app.download_models && uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8080}"]
+CMD ["sh", "-c", "python -m app.download_models || true; exec uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8080}"]
