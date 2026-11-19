@@ -48,6 +48,20 @@ python -m app.seed
 uvicorn app.main:app --host 0.0.0.0 --port 8000
 ```
 
+## Reset the seeded API superadmin password
+
+When the seeded superadmin password is unknown, open a shell in the deployed API service
+and run:
+
+```sh
+python -m app.reset_superadmin_password
+```
+
+The command prompts for a new password without echoing it, updates the existing
+`superadmin@gym.local` account, and revokes its active sessions. It refuses to run against
+SQLite, so run it in the API service where the production database is configured. Do not
+put the password in source code or share it in chat.
+
 Production requires TLS termination, strong unique secrets, calibrated thresholds, shared rate
 limiting for multiple workers, encrypted database backups, appropriate biometric consent and
 retention controls, and a separately evaluated PAD solution when liveness is required. The mock
