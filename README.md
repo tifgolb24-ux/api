@@ -16,6 +16,9 @@ uvicorn app.main:app --reload
 SQLite is the local default. Set `DATABASE_URL=postgresql+psycopg://...` for PostgreSQL.
 Production must use a persistent database; failed database connections stop API startup instead of
 silently switching to a local SQLite database.
+On Railway, set `APP_ENV=production` and connect the API service's `DATABASE_URL` to its Railway
+MySQL service. The Laravel website has a separate Hostinger database configured with Laravel's
+`DB_*` variables.
 API documentation is available at `/docs`. The demo password for all staff accounts is
 `GymDemo123!`; change all secrets before production use.
 
