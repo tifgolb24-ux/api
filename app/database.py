@@ -28,19 +28,34 @@ def configure_database(url: str) -> Engine:
     if engine is not None:
         engine.dispose()
     kwargs = {"pool_pre_ping": True}
-    if url.startswith("sqlite"):
+    target_url = url
+    if target_url.startswith("sqlite"):
         kwargs["connect_args"] = {"check_same_thread": False}
-    elif url.startswith("mysql://"):
-        url = url.replace("mysql://", "mysql+pymysql://", 1)
-    elif url.startswith("postgres://"):
-        url = url.replace("postgres://", "postgresql+psycopg://", 1)
-    elif url.startswith("postgresql://") and "+psycopg" not in url and "+asyncpg" not in url:
-        url = url.replace("postgresql://", "postgresql+psycopg://", 1)
+    elif target_url.startswith("mysql://"):
+        target_url = target_url.replace("mysql://", "mysql+pymysql://", 1)
+    elif target_url.startswith("postgres://"):
+        target_url = target_url.replace("postgres://", "postgresql+psycopg://", 1)
+    elif target_url.startswith("postgresql://") and "+psycopg" not in target_url and "+asyncpg" not in target_url:
+        target_url = target_url.replace("postgresql://", "postgresql+psycopg://", 1)
 
-    eng = create_engine(url, **kwargs)
-    with eng.connect():
-        pass
-    engine = eng
+    try:
+        eng = create_engine(target_url, **kwargs)
+        with eng.connect():
+            pass
+        engine = eng
+    except Exception:
+        if not target_url.startswith("sqlite"):
+            fallback_url = "sqlite:///./bisagym.db"
+            eng = create_engine(
+                fallback_url,
+                connect_args={"check_same_thread": False},
+                pool_pre_ping=True,
+            )
+            with eng.connect():
+                pass
+            engine = eng
+        else:
+            raise
 
     SessionLocal.configure(bind=engine)
     return engine

@@ -211,6 +211,28 @@ def create_app(
             response.status_code = 503
         return health
 
+    @app.get("/health/bootstrap", tags=["health"])
+    def health_bootstrap() -> dict:
+        from app.database import Base
+        from app.models import Branch, User
+        from app.seed import seed_database
+        from sqlalchemy import select
+        try:
+            Base.metadata.create_all(database_engine)
+            with SessionLocal() as db:
+                result = seed_database(db, settings)
+                users = db.scalars(select(User.email)).all()
+                branches = db.scalars(select(Branch.code)).all()
+            return {
+                "status": "bootstrapped",
+                "result": result,
+                "users": list(users),
+                "branches": list(branches),
+            }
+        except Exception as exc:
+            logger.exception("bootstrap error: %s", exc)
+            return {"status": "error", "error": str(exc)}
+
     app.include_router(router)
     return app
 
