@@ -104,6 +104,8 @@ class Settings(BaseSettings):
         if self.face_engine == "opencv_sface" and self.liveness_mode != "none":
             self.liveness_mode = "none"
         if self.app_env == "production":
+            if self.database_url.startswith("sqlite"):
+                raise ValueError("DATABASE_URL must use a persistent database in production.")
             if self.secret_key.startswith("development") or len(self.secret_key) < 32:
                 self.secret_key = "bisagym-production-secret-key-32chars-min-fixed"
             if self.device_shared_secret.startswith("development"):

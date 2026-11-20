@@ -37,18 +37,10 @@ def configure_database(url: str) -> Engine:
     elif url.startswith("postgresql://") and "+psycopg" not in url and "+asyncpg" not in url:
         url = url.replace("postgresql://", "postgresql+psycopg://", 1)
 
-    try:
-        eng = create_engine(url, **kwargs)
-        with eng.connect():
-            pass
-        engine = eng
-    except Exception:
-        if not url.startswith("sqlite"):
-            # Fallback otomatis ke SQLite lokal jika MySQL/Postgres belum aktif/unreachable
-            fallback_url = "sqlite:///./bisagym.db"
-            engine = create_engine(fallback_url, pool_pre_ping=True, connect_args={"check_same_thread": False})
-        else:
-            raise
+    eng = create_engine(url, **kwargs)
+    with eng.connect():
+        pass
+    engine = eng
 
     SessionLocal.configure(bind=engine)
     return engine

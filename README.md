@@ -14,6 +14,8 @@ uvicorn app.main:app --reload
 ```
 
 SQLite is the local default. Set `DATABASE_URL=postgresql+psycopg://...` for PostgreSQL.
+Production must use a persistent database; failed database connections stop API startup instead of
+silently switching to a local SQLite database.
 API documentation is available at `/docs`. The demo password for all staff accounts is
 `GymDemo123!`; change all secrets before production use.
 
